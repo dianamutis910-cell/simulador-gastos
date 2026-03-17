@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Persigue tus sueños con realidad</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background: linear-gradient(135deg, #0a1f44, #1e3a8a, #000);
+  color: white;
+}
+
+header {
+  text-align: center;
+  padding: 30px;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.05);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  cursor: pointer;
+}
+
+.result {
+  margin-top: 15px;
+}
+
+img {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+@media(max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Persigue tus sueños con realidad</h1>
+<p>Planifica tu futuro financiero</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h2>Datos</h2>
+
+<input type="number" id="ingresos" placeholder="Ingreso mensual">
+<input type="number" id="fijos" placeholder="Gastos fijos">
+<input type="number" id="variables" placeholder="Gastos variables">
+
+<select id="meta" onchange="cambiarImagen()">
+<option value="carro">🚗 Carro</option>
+<option value="telefono">📱 Teléfono</option>
+<option value="computador">💻 Computador</option>
+<option value="casa">🏠 Casa</option>
+<option value="viaje">✈️ Viaje</option>
+<option value="inversion">📈 Inversión</option>
+<option value="educacion">🎓 Educación</option>
+<option value="negocio">🏪 Negocio</option>
+</select>
+
+<input type="number" id="costoMeta" placeholder="Costo de la meta">
+
+<button onclick="calcular()">Calcular</button>
+
+<div class="result" id="resultado"></div>
+</div>
+
+<div class="card">
+<h2>Tu meta</h2>
+<img id="imagenMeta" src="https://images.unsplash.com/photo-1503376780353-7e6692767b70">
+<canvas id="grafica"></canvas>
+</div>
+
+</div>
+
+<script>
+let chart;
+
+const imagenes = {
+  carro: "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
+  telefono: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9",
+  computador: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8",
+  casa: "https://images.unsplash.com/photo-1568605114967-8130f3a36994",
+  viaje: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+  inversion: "https://images.unsplash.com/photo-1559526324-593bc073d938",
+  educacion: "https://images.unsplash.com/photo-1584697964190-7383c3f6a38b",
+  negocio: "https://images.unsplash.com/photo-1556740749-887f6717d7e4"
+};
+
+function cambiarImagen() {
+  let meta = document.getElementById("meta").value;
+  document.getElementById("imagenMeta").src = imagenes[meta];
+}
+
+function calcular() {
+  let ingresos = Number(document.getElementById("ingresos").value);
+  let fijos = Number(document.getElementById("fijos").value);
+  let variables = Number(document.getElementById("variables").value);
+  let costoMeta = Number(document.getElementById("costoMeta").value);
+
+  let ahorro = ingresos - fijos - variables;
+
+  if (ahorro <= 0) {
+    document.getElementById("resultado").innerHTML = "⚠️ No tienes capacidad de ahorro";
+    return;
+  }
+
+  let meses = Math.ceil(costoMeta / ahorro);
+
+  document.getElementById("resultado").innerHTML =
+    "💰 Ahorro mensual: $" + ahorro +
+    "<br>⏳ Tiempo: " + meses + " meses";
+
+  generarGrafica(fijos, variables, ahorro);
+}
+
+function generarGrafica(fijos, variables, ahorro) {
+  let ctx = document.getElementById('grafica');
+
+  if (chart) chart.destroy();
+
+  chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Gastos Fijos', 'Gastos Variables', 'Ahorro'],
+      datasets: [{
+        data: [fijos, variables, ahorro]
+      }]
+    }
+  });
+}
+</script>
+
+</body>
+</html>
